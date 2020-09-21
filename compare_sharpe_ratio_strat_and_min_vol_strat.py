@@ -56,6 +56,7 @@ for i in range(len(rebalance_tradeday_monthly_index)):
 df_opt_min_vol_result = pd.DataFrame(list(zip(opt_min_vol_return, opt_min_vol, opt_min_vol_weight)), columns = ['return', 'minimum volatility', 'weight ratio'])
 print('The data frame of minimum volatility strategy: \n', df_opt_min_vol_result)
 
+
 ######
 ###calculate the average year return
 df_cum_last = 1
@@ -78,10 +79,15 @@ df_opt_max_sharpe_ratio_return_dailycum.index = df_prices.Date.iloc[rebalance_tr
 
 opt_max_sharpe_ratio_return = df_cum_last**(12/len(rebalance_tradeday_monthly_index))-1
 print('The return of 4 years for the maximum Sharpe Ratio strategy is: ', '{:.2%}'.format(opt_max_sharpe_ratio_return))
+print(df_opt_max_sharpe_ratio_return_dailycum)
 
 plt.plot(df_opt_max_sharpe_ratio_return_dailycum,label='Max sharpe ratio')
+plt.title('Max Sharpe Ratio Strategy')
+plt.xlabel('Date')
+plt.ylabel('Portfolio Increase')
 plt.show()
-###
+
+####
 df_cum_last_2 = 1
 opt_min_vol_return_dailycum = []
 for m,n in zip(range(len(rebalance_tradeday_monthly_index)-1),range(len(opt_min_vol_weight))):
@@ -103,6 +109,11 @@ df_opt_min_vol_return_dailycum.index = df_prices.Date.iloc[rebalance_tradeday_mo
 
 opt_min_vol_return = df_cum_last_2**(12/len(rebalance_tradeday_monthly_index))-1
 print('The return of 4 years for the mimimum volatility strategy is: ', '{:.2%}'.format(opt_min_vol_return))
+print(df_opt_min_vol_return_dailycum)
 
-plt.plot(df_opt_min_vol_return_dailycum, label='Min volatility')
+plt.plot(df_opt_min_vol_return_dailycum)
+plt.title('Mimimum Volatility Strategy')
+plt.xlabel('Date')
+plt.ylabel('Portfolio Increase')
+
 plt.show()
