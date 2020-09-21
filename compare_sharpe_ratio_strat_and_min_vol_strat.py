@@ -6,9 +6,9 @@ import scipy.optimize as solver
 from functools import reduce
 from datetime import datetime
 from typing import List
-# from utility_functions import *
+from utility_functions import *
 
-%run utility_functions.ipynb
+# %run utility_functions.ipynb
 
 default_data_source = 'yahoo'
 default_risk_free_rate = 0.02
@@ -61,15 +61,19 @@ print('The data frame of minimum volatility strategy: \n', df_opt_min_vol_result
 ###calculate the average year return
 df_cum_last = 1
 opt_max_sharpe_ratio_return_dailycum = []
+df_return = df_return + 1
+df_return.iloc[rebalance_tradeday_monthly_index[0],:] = 1
+
 for i,k in zip(range(len(rebalance_tradeday_monthly_index)-1),range(len(opt_max_sharpe_weight))):
     
-    df_2 = ((df_return.iloc[rebalance_tradeday_monthly_index[i]:rebalance_tradeday_monthly_index[i+1]])+1).cumprod() #one month
+    df_2 = df_return.iloc[rebalance_tradeday_monthly_index[i]:rebalance_tradeday_monthly_index[i+1]]
+    df_2 = df_2.cumprod() #one month
     df_cum = df_2*opt_max_sharpe_weight[k]*df_cum_last
     df_cum_sum = df_cum.sum(axis=1)
     opt_max_sharpe_ratio_return_dailycum.append(df_cum_sum)
     df_cum_last= df_cum_sum.iloc[-1]
     
-df_last_month_1 = (df_return.iloc[rebalance_tradeday_monthly_index[-1]:] + 1).cumprod()
+df_last_month_1 = df_return.iloc[rebalance_tradeday_monthly_index[-1]:].cumprod()
 df_last_month_cum = df_last_month_1*opt_max_sharpe_weight[-1]*df_cum_last
 opt_max_sharpe_ratio_return_dailycum.append(df_last_month_cum.sum(axis=1))
 df_cum_last = (df_last_month_cum.sum(axis=1)).iloc[-1]
@@ -92,14 +96,14 @@ df_cum_last_2 = 1
 opt_min_vol_return_dailycum = []
 for m,n in zip(range(len(rebalance_tradeday_monthly_index)-1),range(len(opt_min_vol_weight))):
     
-    df_5 = ((df_return.iloc[rebalance_tradeday_monthly_index[m]:rebalance_tradeday_monthly_index[m+1]])+1).cumprod() #one month
+    df_5 = (df_return.iloc[rebalance_tradeday_monthly_index[m]:rebalance_tradeday_monthly_index[m+1]]).cumprod() #one month
     df_cum = df_5*opt_min_vol_weight[n]*df_cum_last_2
     df_cum_sum = df_cum.sum(axis=1)
     opt_min_vol_return_dailycum.append(df_cum_sum)
     df_cum_last_2= df_cum_sum.iloc[-1]
 
 
-df_last_month_2 = (df_return.iloc[rebalance_tradeday_monthly_index[-1]:] + 1).cumprod()
+df_last_month_2 = df_return.iloc[rebalance_tradeday_monthly_index[-1]:].cumprod()
 df_last_month_cum_2 = df_last_month_2*opt_min_vol_weight[-1]*df_cum_last_2
 opt_min_vol_return_dailycum.append(df_last_month_cum_2.sum(axis=1))
 df_last_month_2 = (df_last_month_cum_2.sum(axis=1)).iloc[-1]
@@ -115,5 +119,4 @@ plt.plot(df_opt_min_vol_return_dailycum)
 plt.title('Mimimum Volatility Strategy')
 plt.xlabel('Date')
 plt.ylabel('Portfolio Increase')
-
 plt.show()
